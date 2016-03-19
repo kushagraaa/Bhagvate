@@ -9,6 +9,14 @@ dirs = os.listdir( path )
 
 words=defaultdict(lambda : defaultdict(list))	    #global database
 
+def rem_spaces(s):
+	while s[0]==" ":
+		s = s[1:]
+	while s[len(s)-1]==" ":
+		s = s[0:len(s)-1]
+	return s
+
+
 def find_all(a_string, sub):
     result = []
     k = 0
@@ -80,6 +88,7 @@ def main():
 
 								x = check.find("SYNONYMS")      
 								word=check[x+8:list[0]-1]             #first word (just after SYNONYMS)
+								word = rem_spaces(word)
 								#loop to get word and meaning pairs between dashes stored in list  
 								for i in range(1,len(list),1):
 									current = check[list[i-1]+1:list[i]]
@@ -87,16 +96,19 @@ def main():
 										del list[i]
 										current = check[list[i-1]+1:list[i]]
 									index = current.rfind("; ")
-									meaning = current[1:index]      
+									meaning = current[1:index] 
+									meaning = rem_spaces(meaning)     
 									words[word][meaning].append("sb/" + subdir + "/" + subsubdir + "/" + files)   #adding the collected data from file into the global database
 									# if subdir + "/" + subsubdir + "/" + files == "10/2/27.htm" :
 									# 	print(word)
 									# 	print(meaning)
 									# 	print("\n")
 									word=current[index+2:len(current)-1]
-
+									word = rem_spaces(word)
 								x = check.find("TRANSLATION")
-								meaning=check[list[len(list)-1]+8:x-1]    #last meaning (just before TRANSLATION)
+								meaning=check[list[len(list)-1]+1:x-1]    #last meaning (just before TRANSLATION)
+								#print(word+" "+ meaning)
+								meaning = rem_spaces(meaning)
 								words[word][meaning].append("sb/" + subdir + "/" + subsubdir + "/" + files)   
 
 	with io.open("data.txt", "w", encoding="utf8") as f:									# writing data as json string in unicode
